@@ -47,3 +47,8 @@ medical-inc-booking-system/
 ├── .gitignore               # Ignored files and directories
 ├── Makefile                 # Shortcuts for common developer tasks (e.g., `make build`)
 └── README.md                # The entry point for any developer joining the project
+
+
+## (OOC*) DISCLAIMER
+This is not a real repository and does not function as such.
+*Out of Character
