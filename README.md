@@ -26,8 +26,6 @@ All transmission of this data occurs over TLS 1.3 or higher. The system also uti
 
 ## Repository Organization
 The repository is structured as follows:
-## Repository Organization
-The repository is structured as follows:
 
 ```text
 medical-inc-booking-system/
