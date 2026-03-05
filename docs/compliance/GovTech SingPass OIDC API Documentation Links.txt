@@ -1,0 +1,4 @@
+OPENID
+https://openid.net/specs/openid-connect-core-1_0.html
+SingPass API Documentation
+https://docs.developer.singpass.gov.sg/docs/technical-specifications/integration-guide/1.-authorization-request
