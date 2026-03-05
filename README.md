@@ -33,10 +33,13 @@ medical-inc-booking-system/
 ├── assets/                  # Non-code assets provided by Medical Inc. (clinic logos, branding)
 ├── config/                  # Configuration files and environment templates
 ├── docs/                    # Centralized project documentation
+│   ├── AnalysisReport/      # Analysis of PS Requirements
 │   ├── api/                 # API contracts and specifications (e.g., Payment Gateway, SingPass)
-│   ├── architecture/        # Architecture Decision Records (ADRs) and system diagrams
+│   ├── Compliance/          # Runbooks, deployment guides, and handover documentation
+│   ├── Diagrams/            # Supporting Diagrams
 │   ├── handover/            # Runbooks, deployment guides, and handover documentation
-│   └── requirements/        # Approved Project Spec (AR-1223), Change Requests, and MOH/PDPA guidelines
+│   ├── PS/                  # Project Specification / Customer Requirements
+│   └── SRS/                 # Software Requirements Specification
 ├── infra/                   # Infrastructure as Code (e.g., Terraform for Amazon RDS provisioning)
 ├── scripts/                 # Utility scripts (e.g., database seeding for legacy patient data migration)
 ├── src/                     # Source code for the microservices architecture
