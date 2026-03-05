@@ -1,5 +1,9 @@
-@startuml IMBS_Use_Case_Diagram_GPV_v2
-title Integrated Medical Booking System (IMBS)\nUse Case Diagram | Version: 1.0
+@startuml
+title Integrated Medical Booking System (IMBS)\nUse Case Diagram \nDocument ID: PT-SRS01 | Version: 1.0
+
+scale max 1600 width
+skinparam nodesep 30
+skinparam ranksep 40
 
 top to bottom direction
 skinparam packageStyle rectangle
@@ -9,235 +13,101 @@ skinparam linetype ortho
 skinparam usecase {
   BackgroundColor #EEF4FF
   BorderColor     #3A6EA5
-  FontSize        11
+  FontSize        10
+  FontColor       #1a1a1a
 }
 skinparam actor {
   BackgroundColor #FFFBE6
   BorderColor     #B8860B
-  FontSize        12
+  FontSize        11
+  FontColor       #1a1a1a
 }
 skinparam package {
   BackgroundColor #F8F8F8
   BorderColor     #AAAAAA
-  FontSize        12
+  FontSize        11
   FontStyle       bold
 }
 skinparam arrow {
-  Color   #444444
-  FontSize 10
+  Color    #444444
+  FontSize 9
 }
 
-' ═══════════════════════════════════════════════════════
-' INTERNAL ACTORS
-' ═══════════════════════════════════════════════════════
-actor "Patient"        as Patient  #FFFBE6
-actor "Nurse"          as Nurse    #FFFBE6
-actor "Doctor"         as Doctor   #FFFBE6
-actor "Administrator"  as Admin    #FFFBE6
+actor "Patient"       as Patient #FFFBE6
+actor "Nurse"         as Nurse   #FFFBE6
+actor "Doctor"        as Doctor  #FFFBE6
+actor "Administrator" as Admin   #FFFBE6
 
-' ═══════════════════════════════════════════════════════
-' EXTERNAL ACTORS
-' ═══════════════════════════════════════════════════════
-actor "SingPass\nService"    as SingPass <<external>> #E6F4EA
-actor "Payment\nService"     as Payment  <<external>> #E6F4EA
-actor "SMS / Email\nService" as SMSEmail <<external>> #E6F4EA
+actor "SingPass\nService"  as SingPass <<external>> #E6F4EA
+actor "Payment\nService"   as Payment  <<external>> #E6F4EA
+actor "SMS/Email\nService" as SMSEmail <<external>> #E6F4EA
 
-' ═══════════════════════════════════════════════════════
-' SYSTEM BOUNDARY
-' ═══════════════════════════════════════════════════════
 rectangle "Integrated Medical Booking System (IMBS)" {
 
-  ' ────────────────────────────────────────────────────
-  ' UC-AUTH  |  FR-AUTH-01 to FR-AUTH-09
-  ' Source   |  Section 4.1 - User Registration & Auth
-  ' GPV      |  Actors gain and maintain verified,
-  '          |  secure access to the system
-  ' ────────────────────────────────────────────────────
   package "UC-AUTH: User Registration & Authentication" as PKG_AUTH {
-
-    usecase "UC-AUTH-01\nRegister for System Access\n[FR-AUTH-01]"          as UC_AUTH_01
-    ' GPV: User gains a personal account to access IMBS
-
-    usecase "UC-AUTH-02\nLog In to System\n[FR-AUTH-01, FR-AUTH-07]"        as UC_AUTH_02
-    ' GPV: User gains access to their role-based dashboard
-
-    usecase "UC-AUTH-03\nLog In via SingPass\n[FR-AUTH-06, FR-SI-SP-01]"    as UC_AUTH_03
-    ' GPV: User gains verified identity-based access without
-    '      a separate IMBS password
-
-    usecase "UC-AUTH-04\nManage Account Credentials\n[FR-AUTH-02, FR-AUTH-03, FR-AUTH-05]" as UC_AUTH_04
-    ' GPV: User maintains accurate and secure personal
-    '      account information
-
-    usecase "UC-AUTH-05\nDeactivate Own Account\n[FR-AUTH-04]"              as UC_AUTH_05
-    ' GPV: User removes their own access on request
-
-    usecase "UC-AUTH-06\nDelete User Account\n[FR-AUTH-04]"                 as UC_AUTH_06
-    ' GPV: Administrator permanently removes a user record
-    '      in compliance with data retention policies
-
+    usecase "UC-AUTH-01\nRegister for System Access\n[FR-AUTH-01]"                              as UC_AUTH_01
+    usecase "UC-AUTH-02\nLog In to System\n[FR-AUTH-01, FR-AUTH-07,\nFR-AUTH-08, FR-AUTH-09]"   as UC_AUTH_02
+    usecase "UC-AUTH-03\nLog In via SingPass\n[FR-AUTH-06, FR-SI-SP-01]"                        as UC_AUTH_03
+    usecase "UC-AUTH-04\nManage Account Credentials\n[FR-AUTH-02, FR-AUTH-03, FR-AUTH-05]"      as UC_AUTH_04
+    usecase "UC-AUTH-05\nDeactivate Own Account\n[FR-AUTH-04]"                                  as UC_AUTH_05
+    usecase "UC-AUTH-06\nDelete User Account\n[FR-AUTH-04]"                                     as UC_AUTH_06
   }
 
-  ' ────────────────────────────────────────────────────
-  ' UC-RBAC  |  FR-RBAC-01 to FR-RBAC-08
-  ' Source   |  Section 4.2 - Role Based Access Control
-  ' GPV      |  Each actor accesses only the capabilities
-  '          |  appropriate to their clinical role
-  ' ────────────────────────────────────────────────────
   package "UC-RBAC: Role Based Access Control" as PKG_RBAC {
-
-    usecase "UC-RBAC-01\nCreate & Assign Role\n[FR-RBAC-01]"                as UC_RBAC_01
-    ' GPV: Administrator defines who can do what in IMBS
-
-    usecase "UC-RBAC-02\nModify Role Permissions\n[FR-RBAC-03]"             as UC_RBAC_02
-    ' GPV: Administrator adapts access boundaries as
-    '      clinic operations evolve
-
-    usecase "UC-RBAC-03\nDeactivate Role\n[FR-RBAC-04]"                     as UC_RBAC_03
-    ' GPV: Administrator safely retires a role without
-    '      leaving users in an undefined state
-
+    usecase "UC-RBAC-01\nCreate & Assign Role\n[FR-RBAC-01]"                                    as UC_RBAC_01
+    usecase "UC-RBAC-02\nModify Role Permissions\n[FR-RBAC-03]"                                 as UC_RBAC_02
+    usecase "UC-RBAC-03\nDeactivate Role\n[FR-RBAC-04]"                                         as UC_RBAC_03
     usecase "UC-RBAC-04\nAccess Role-Based Dashboard\n[FR-RBAC-02, FR-RBAC-05,\nFR-RBAC-06, FR-RBAC-07, FR-RBAC-08]" as UC_RBAC_04
-    ' GPV: Each actor sees and performs only the tasks
-    '      relevant to their clinical responsibility
-
   }
 
-  ' ────────────────────────────────────────────────────
-  ' UC-BOOK  |  FR-BOOK-01 to FR-BOOK-09
-  ' Source   |  Section 4.3 - Appointment Booking & Mgmt
-  ' GPV      |  Patients secure timely medical access;
-  '          |  staff maintain accurate clinic schedules
-  ' ────────────────────────────────────────────────────
   package "UC-BOOK: Appointment Booking & Management" as PKG_BOOK {
-
-    usecase "UC-BOOK-01\nBook Appointment\n[FR-BOOK-01, FR-BOOK-05,\nFR-BOOK-06, FR-BOOK-07]" as UC_BOOK_01
-    ' GPV: Patient secures a confirmed medical slot with
-    '      a specific doctor at a chosen clinic
-
-    usecase "UC-BOOK-02\nView Appointment Schedule\n[FR-BOOK-02]"           as UC_BOOK_02
-    ' GPV: Actor stays informed of upcoming and past
-    '      appointments relevant to their role
-
-    usecase "UC-BOOK-03\nReschedule Appointment\n[FR-BOOK-03, FR-BOOK-08]"  as UC_BOOK_03
-    ' GPV: Patient adjusts their care timing without
-    '      losing their place in the system
-
-    usecase "UC-BOOK-04\nCancel Appointment\n[FR-BOOK-04, FR-BOOK-09]"      as UC_BOOK_04
-    ' GPV: Actor releases a slot back to the system
-    '      with a full audit record retained
-
-    usecase "UC-BOOK-05\nUpdate Appointment Status\n[FR-BOOK-03]"           as UC_BOOK_05
-    ' GPV: Staff record the real-world outcome of an
-    '      appointment (check-in, completed, no-show)
-
+    usecase "UC-BOOK-01\nBook Appointment\n[FR-BOOK-01, FR-BOOK-05,\nFR-BOOK-06, FR-BOOK-07]"   as UC_BOOK_01
+    usecase "UC-BOOK-02\nView Appointment Schedule\n[FR-BOOK-02]"                               as UC_BOOK_02
+    usecase "UC-BOOK-03\nReschedule Appointment\n[FR-BOOK-03, FR-BOOK-08]"                      as UC_BOOK_03
+    usecase "UC-BOOK-04\nCancel Appointment\n[FR-BOOK-04, FR-BOOK-09]"                          as UC_BOOK_04
+    usecase "UC-BOOK-05\nUpdate Appointment Status\n[FR-BOOK-03]"                               as UC_BOOK_05
   }
 
-  ' ────────────────────────────────────────────────────
-  ' UC-NTF   |  FR-NTF-01 to FR-NTF-08
-  ' Source   |  Section 4.4 - Notification Management
-  ' GPV      |  Patients and staff remain accurately
-  '          |  informed without manual follow-up
-  ' ────────────────────────────────────────────────────
   package "UC-NTF: Notification Management" as PKG_NTF {
-
     usecase "UC-NTF-01\nReceive Appointment Notification\n[FR-NTF-01, FR-NTF-05,\nFR-NTF-06, FR-NTF-07, FR-NTF-08]" as UC_NTF_01
-    ' GPV: Patient or staff member is automatically kept
-    '      informed of all booking status changes
-
-    usecase "UC-NTF-02\nManage Notification Templates\n[FR-NTF-03]"         as UC_NTF_02
-    ' GPV: Administrator ensures all outgoing messages
-    '      are accurate and professionally worded
-
-    usecase "UC-NTF-03\nAudit Notification Logs\n[FR-NTF-02, FR-NTF-04]"   as UC_NTF_03
-    ' GPV: Administrator verifies that all notifications
-    '      were delivered and retains records for compliance
-
+    usecase "UC-NTF-02\nManage Notification Templates\n[FR-NTF-03]"                             as UC_NTF_02
+    usecase "UC-NTF-03\nAudit Notification Logs\n[FR-NTF-02, FR-NTF-04]"                        as UC_NTF_03
   }
 
-  ' ────────────────────────────────────────────────────
-  ' UC-DOC   |  FR-DOC-01 to FR-DOC-07
-  ' Source   |  Section 4.5 - Doctor Availability Mgmt
-  ' GPV      |  Doctors control their schedule while
-  '          |  protecting patients from disruption
-  ' ────────────────────────────────────────────────────
   package "UC-DOC: Doctor Availability Management" as PKG_DOC {
-
     usecase "UC-DOC-01\nManage Availability Schedule\n[FR-DOC-01, FR-DOC-02,\nFR-DOC-03, FR-DOC-04, FR-DOC-05]" as UC_DOC_01
-    ' GPV: Doctor maintains an accurate reflection of
-    '      their working hours for patient booking
-
-    usecase "UC-DOC-02\nRequest Emergency Unavailability\n[FR-DOC-06]"      as UC_DOC_02
-    ' GPV: Doctor flags an unplanned absence within
-    '      24 hours for administrative review
-
-    usecase "UC-DOC-03\nApprove Emergency Unavailability\n[FR-DOC-06, FR-DOC-07]" as UC_DOC_03
-    ' GPV: Administrator validates the absence and
-    '      protects affected patients via notifications
-
+    usecase "UC-DOC-02\nRequest Emergency Unavailability\n[FR-DOC-06]"                          as UC_DOC_02
+    usecase "UC-DOC-03\nApprove Emergency Unavailability\n[FR-DOC-06, FR-DOC-07]"               as UC_DOC_03
   }
 
-  ' ────────────────────────────────────────────────────
-  ' UC-WL    |  FR-WL-01 to FR-WL-07
-  ' Source   |  Section 4.6 - Waiting List Management
-  ' GPV      |  Patients retain a fair, ordered opportunity
-  '          |  to access a fully-booked slot
-  ' ────────────────────────────────────────────────────
   package "UC-WL: Waiting List Management" as PKG_WL {
-
-    usecase "UC-WL-01\nJoin Waiting List\n[FR-WL-01, FR-WL-05]"             as UC_WL_01
-    ' GPV: Patient retains a fair chance at a
-    '      fully-booked appointment slot
-
-    usecase "UC-WL-02\nMonitor Waiting List Position\n[FR-WL-02]"           as UC_WL_02
-    ' GPV: Actor tracks their or their patient's
-    '      priority in the waiting queue
-
-    usecase "UC-WL-03\nClaim Released Appointment Slot\n[FR-WL-06, FR-WL-07]" as UC_WL_03
-    ' GPV: Patient converts their waitlist entry into
-    '      a confirmed appointment booking
-
-    usecase "UC-WL-04\nWithdraw from Waiting List\n[FR-WL-04]"              as UC_WL_04
-    ' GPV: Patient removes an unwanted waitlist entry
-    '      freeing the position for the next patient
-
+    usecase "UC-WL-01\nJoin Waiting List\n[FR-WL-01, FR-WL-05]"                                 as UC_WL_01
+    usecase "UC-WL-02\nMonitor Waiting List Position\n[FR-WL-02]"                               as UC_WL_02
+    usecase "UC-WL-03\nClaim Released Appointment Slot\n[FR-WL-06, FR-WL-07]"                  as UC_WL_03
+    usecase "UC-WL-04\nWithdraw from Waiting List\n[FR-WL-04]"                                  as UC_WL_04
   }
 
-  ' ────────────────────────────────────────────────────
-  ' UC-REF   |  FR-REF-01 to FR-REF-06
-  ' Source   |  Section 4.7 - Referral Processing
-  ' GPV      |  Patients receive authorised specialist
-  '          |  referrals; doctors fulfil clinical duty
-  ' ────────────────────────────────────────────────────
   package "UC-REF: Referral Processing" as PKG_REF {
-
-    usecase "UC-REF-01\nCreate & Authorise Referral Letter\n[FR-REF-01, FR-REF-06]" as UC_REF_01
-    ' GPV: Doctor formally initiates the patient's
-    '      specialist care pathway
-
-    usecase "UC-REF-02\nView Referral Letter\n[FR-REF-02]"                  as UC_REF_02
-    ' GPV: Authorised actor accesses a patient's
-    '      referral record as permitted by their role
-
-    usecase "UC-REF-03\nUpdate Referral Letter\n[FR-REF-03]"                as UC_REF_03
-    ' GPV: Doctor corrects a referral while preserving
-    '      the original version for audit purposes
-
-    usecase "UC-REF-04\nProvide Referral to Patient\n[FR-REF-05]"           as UC_REF_04
-    ' GPV: Nurse delivers the completed referral to the
-    '      patient via print or secure electronic copy
-
-    usecase "UC-REF-05\nArchive Referral Record\n[FR-REF-04]"               as UC_REF_05
-    ' GPV: Administrator retires a referral from active
-    '      view while preserving it for legal compliance
-
+    usecase "UC-REF-01\nCreate & Authorise Referral Letter\n[FR-REF-01, FR-REF-06]"             as UC_REF_01
+    usecase "UC-REF-02\nView Referral Letter\n[FR-REF-02]"                                      as UC_REF_02
+    usecase "UC-REF-03\nUpdate Referral Letter\n[FR-REF-03]"                                    as UC_REF_03
+    usecase "UC-REF-04\nProvide Referral to Patient\n[FR-REF-05]"                               as UC_REF_04
+    usecase "UC-REF-05\nArchive Referral Record\n[FR-REF-04]"                                   as UC_REF_05
   }
+
+  PKG_AUTH -[hidden]right- PKG_RBAC
+  PKG_BOOK -[hidden]right- PKG_NTF
+  PKG_DOC  -[hidden]right- PKG_WL
+
+  PKG_AUTH -[hidden]down- PKG_BOOK
+  PKG_RBAC -[hidden]down- PKG_NTF
+  PKG_BOOK -[hidden]down- PKG_DOC
+  PKG_NTF  -[hidden]down- PKG_WL
+  PKG_DOC  -[hidden]down- PKG_REF
+  PKG_WL   -[hidden]down- PKG_REF
 
 }
 
-' ═══════════════════════════════════════════════════════
-' PATIENT ASSOCIATIONS  (Blue #3A6EA5)
-' ═══════════════════════════════════════════════════════
 Patient -[#3A6EA5]-> UC_AUTH_01
 Patient -[#3A6EA5]-> UC_AUTH_02
 Patient -[#3A6EA5]-> UC_AUTH_03
@@ -255,9 +125,6 @@ Patient -[#3A6EA5]-> UC_WL_03
 Patient -[#3A6EA5]-> UC_WL_04
 Patient -[#3A6EA5]-> UC_REF_02
 
-' ═══════════════════════════════════════════════════════
-' NURSE ASSOCIATIONS  (Gold #B8860B)
-' ═══════════════════════════════════════════════════════
 Nurse -[#B8860B]-> UC_AUTH_02
 Nurse -[#B8860B]-> UC_RBAC_04
 Nurse -[#B8860B]-> UC_BOOK_02
@@ -267,9 +134,6 @@ Nurse -[#B8860B]-> UC_WL_02
 Nurse -[#B8860B]-> UC_REF_02
 Nurse -[#B8860B]-> UC_REF_04
 
-' ═══════════════════════════════════════════════════════
-' DOCTOR ASSOCIATIONS  (Green #228B22)
-' ═══════════════════════════════════════════════════════
 Doctor -[#228B22]-> UC_AUTH_02
 Doctor -[#228B22]-> UC_RBAC_04
 Doctor -[#228B22]-> UC_BOOK_02
@@ -280,9 +144,6 @@ Doctor -[#228B22]-> UC_REF_01
 Doctor -[#228B22]-> UC_REF_02
 Doctor -[#228B22]-> UC_REF_03
 
-' ═══════════════════════════════════════════════════════
-' ADMINISTRATOR ASSOCIATIONS  (Red #8B0000)
-' ═══════════════════════════════════════════════════════
 Admin -[#8B0000]-> UC_AUTH_02
 Admin -[#8B0000]-> UC_AUTH_06
 Admin -[#8B0000]-> UC_RBAC_01
@@ -297,19 +158,11 @@ Admin -[#8B0000]-> UC_DOC_01
 Admin -[#8B0000]-> UC_DOC_03
 Admin -[#8B0000]-> UC_REF_05
 
-' ═══════════════════════════════════════════════════════
-' EXTERNAL SYSTEM ASSOCIATIONS  (Teal #2E8B57)
-' ═══════════════════════════════════════════════════════
 UC_AUTH_03 -[#2E8B57]-> SingPass
 UC_BOOK_01 -[#2E8B57]-> Payment
 UC_NTF_01  -[#2E8B57]-> SMSEmail
 UC_WL_03   -[#2E8B57]-> SMSEmail
 
-' ═══════════════════════════════════════════════════════
-' INCLUDE RELATIONSHIPS
-' Used where a use case always requires another
-' to complete its GPV
-' ═══════════════════════════════════════════════════════
 UC_BOOK_01 ..> UC_BOOK_02 : <<include>>
 UC_BOOK_01 ..> UC_NTF_01  : <<include>>
 UC_BOOK_03 ..> UC_NTF_01  : <<include>>
@@ -319,27 +172,18 @@ UC_DOC_02  ..> UC_DOC_03  : <<include>>
 UC_WL_03   ..> UC_NTF_01  : <<include>>
 UC_WL_03   ..> UC_BOOK_01 : <<include>>
 
-' ═══════════════════════════════════════════════════════
-' EXTEND RELATIONSHIPS
-' Used where a use case conditionally adds behaviour
-' to another based on a specific scenario
-' ═══════════════════════════════════════════════════════
 UC_AUTH_03 ..> UC_AUTH_02 : <<extend>>
 UC_WL_01   ..> UC_BOOK_01 : <<extend>>
 UC_REF_04  ..> UC_REF_01  : <<extend>>
 
-' ═══════════════════════════════════════════════════════
-' LEGEND
-' ═══════════════════════════════════════════════════════
 legend bottom right
-  |= Colour / Style         |= Meaning                         |
-  |<#3A6EA5> Blue solid     | Patient associations             |
-  |<#B8860B> Gold solid     | Nurse associations               |
-  |<#228B22> Green solid    | Doctor associations              |
-  |<#8B0000> Red solid      | Administrator associations       |
-  |<#2E8B57> Teal solid     | External system associations     |
-  | Dashed arrow (..>)      | <<include>> or <<extend>>        |
-  | [FR-X-XX]               | Tracing ref to SRS requirement   |
+  |= Colour / Style    |= Meaning                     |
+  |<#3A6EA5> Blue      | Patient associations         |
+  |<#B8860B> Gold      | Nurse associations           |
+  |<#228B22> Green     | Doctor associations          |
+  |<#8B0000> Red       | Administrator associations   |
+  |<#2E8B57> Teal      | External system associations |
+  | Dashed (..>)       | <<include>> or <<extend>>    |
+  | [FR-X-XX]          | SRS requirement traceability |
 endlegend
-
 @enduml
