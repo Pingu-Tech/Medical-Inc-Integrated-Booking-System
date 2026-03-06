@@ -1,0 +1,160 @@
+@startuml
+!theme plain
+skinparam backgroundColor #FAFAFA
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam linetype ortho
+
+skinparam rectangle {
+    BackgroundColor #EBF5FB
+    BorderColor #2980B9
+    FontColor #1A5276
+    RoundCorner 8
+    FontSize 13
+}
+skinparam database {
+    BackgroundColor #E8F8F5
+    BorderColor #1E8449
+    FontSize 13
+}
+skinparam actor {
+    BackgroundColor #FDF2E9
+    BorderColor #E67E22
+    FontSize 14
+}
+skinparam cloud {
+    BackgroundColor #F5EEF8
+    BorderColor #7D3C98
+    FontSize 14
+}
+skinparam node {
+    BackgroundColor #EAF2FF
+    BorderColor #2471A3
+    FontSize 14
+    FontStyle bold
+}
+skinparam arrow {
+    FontSize 12
+    Color #555555
+}
+
+title <size:18>Medical Inc. — Integrated Medical Booking System</size>\n<size:14>System Architecture Diagram</size>
+
+' ===== ACTORS =====
+actor "Patient" as Patient
+actor "Nurse" as Nurse
+actor "Doctor" as Doctor
+actor "Admin" as Admin
+
+' ===== CLIENT =====
+node "Patient Client\n(Personal Device)" as PatientClient {
+    rectangle "Web Browser" as Browser
+    rectangle "Patient Portal" as Frontend
+}
+
+node "Staff Client\n(Clinic Computer)" as StaffClient {
+    rectangle "Internal Desktop App" as DesktopApp
+}
+
+' ===== SECURITY =====
+node "Security Layer" as SecLayer {
+    rectangle "Web App Firewall (WAF)" as WAF
+    rectangle "TLS 1.2+  /  HTTPS" as TLS
+}
+
+' ===== APPLICATION =====
+node "Application Tier  —  AWS / Azure  (Singapore)" as AppTier {
+
+    rectangle "API Gateway" as APIGateway
+
+    node "Core Services" as CoreSvcs {
+        rectangle "Auth Service" as AuthSvc
+        rectangle "RBAC Service" as RBACSvc
+        rectangle "Booking Service" as BookSvc
+        rectangle "Availability Service" as AvailSvc
+    }
+
+    node "Support Services" as SupportSvcs {
+        rectangle "Notification Service" as NtfSvc
+        rectangle "Waiting List Service" as WLSvc
+        rectangle "Referral Service" as RefSvc
+        rectangle "Admin Service" as AdminSvc
+    }
+}
+
+' ===== DATA =====
+node "Data Tier" as DataTier {
+    database "MySQL Database\n(ACID  /  Encrypted at Rest)" as DB
+    database "Audit Log Store\n(PDPA Compliant)" as AuditDB
+}
+
+' ===== EXTERNAL =====
+cloud "External Services" as ExtSvcs {
+    rectangle "SingPass  (OIDC)" as SingPass
+    rectangle "Twilio  (SMS)" as Twilio
+    rectangle "Amazon SES  (Email)" as SES
+    rectangle "Payment Gateway" as PayGW
+    rectangle "Network Printer" as Printer
+}
+
+' ===== CONNECTIONS =====
+
+' Actors to clients
+Patient --> Browser
+Nurse   --> DesktopApp
+Doctor  --> DesktopApp
+Admin   --> DesktopApp
+
+' Patient client
+Browser --> Frontend
+
+' Clients to security
+Frontend   --> TLS
+DesktopApp --> TLS
+TLS --> WAF
+
+' Security to gateway
+WAF --> APIGateway
+
+' Gateway to services
+APIGateway --> AuthSvc
+APIGateway --> RBACSvc
+APIGateway --> BookSvc
+APIGateway --> AvailSvc
+APIGateway --> NtfSvc
+APIGateway --> WLSvc
+APIGateway --> RefSvc
+APIGateway --> AdminSvc
+
+' Inter-service
+AuthSvc  --> RBACSvc : role check
+BookSvc  --> NtfSvc  : trigger
+BookSvc  --> WLSvc   : slot release
+AvailSvc --> NtfSvc  : schedule change
+AvailSvc --> BookSvc : availability update
+WLSvc    --> NtfSvc  : slot offer
+RefSvc   --> NtfSvc  : referral ready
+
+' Services to DB
+AuthSvc  --> DB
+RBACSvc  --> DB
+BookSvc  --> DB
+NtfSvc   --> DB
+AvailSvc --> DB
+WLSvc    --> DB
+RefSvc   --> DB
+AdminSvc --> DB
+
+' Audit logs
+AuthSvc  --> AuditDB : login log
+AdminSvc --> AuditDB : admin log
+NtfSvc   --> AuditDB : notification log
+
+' External integrations
+AuthSvc --> SingPass : OIDC (optional)
+NtfSvc  --> Twilio   : SMS
+NtfSvc  --> SES      : Email
+BookSvc --> PayGW    : payment
+RefSvc  --> Printer  : print
+
+@enduml

@@ -1,0 +1,237 @@
+@startuml
+!theme plain
+skinparam backgroundColor #FAFAFA
+skinparam defaultFontName Arial
+skinparam defaultFontSize 13
+skinparam linetype ortho
+
+skinparam entity {
+    BackgroundColor #EBF5FB
+    BorderColor #2980B9
+    FontColor #1A5276
+    FontSize 13
+}
+
+skinparam arrow {
+    Color #555555
+    FontSize 11
+}
+
+title <size:18>Medical Inc. — Integrated Medical Booking System</size>\n<size:14>Database ER Diagram</size>
+
+' ===== ENTITIES =====
+
+entity "USER" as User {
+    * user_id : INT <<PK>>
+    --
+    email : VARCHAR
+    mobile_number : VARCHAR
+    password_hash : VARCHAR
+    role : ENUM(patient, nurse, doctor, admin)
+    is_active : BOOLEAN
+    created_at : DATETIME
+    last_login : DATETIME
+}
+
+entity "PATIENT" as Patient {
+    * patient_id : INT <<PK>>
+    --
+    * user_id : INT <<FK>>
+    full_name : VARCHAR
+    date_of_birth : DATE
+    nric : VARCHAR
+    preferred_language : ENUM(en, zh, ms, ta)
+    singpass_id : VARCHAR
+}
+
+entity "STAFF" as Staff {
+    * staff_id : INT <<PK>>
+    --
+    * user_id : INT <<FK>>
+    full_name : VARCHAR
+    clinic_id : INT <<FK>>
+    department : VARCHAR
+    employee_id : VARCHAR
+}
+
+entity "ROLE" as Role {
+    * role_id : INT <<PK>>
+    --
+    role_name : VARCHAR
+    description : TEXT
+    is_active : BOOLEAN
+}
+
+entity "PERMISSION" as Permission {
+    * permission_id : INT <<PK>>
+    --
+    permission_name : VARCHAR
+    description : TEXT
+}
+
+entity "ROLE_PERMISSION" as RolePermission {
+    * role_id : INT <<FK>>
+    * permission_id : INT <<FK>>
+}
+
+entity "CLINIC" as Clinic {
+    * clinic_id : INT <<PK>>
+    --
+    name : VARCHAR
+    address : VARCHAR
+    phone : VARCHAR
+    operating_hours : VARCHAR
+}
+
+entity "DOCTOR_AVAILABILITY" as DoctorAvailability {
+    * availability_id : INT <<PK>>
+    --
+    * staff_id : INT <<FK>>
+    * clinic_id : INT <<FK>>
+    date : DATE
+    start_time : TIME
+    end_time : TIME
+    is_blocked : BOOLEAN
+    requires_admin_approval : BOOLEAN
+    approved_by : INT <<FK>>
+    created_at : DATETIME
+}
+
+entity "APPOINTMENT" as Appointment {
+    * appointment_id : INT <<PK>>
+    --
+    * patient_id : INT <<FK>>
+    * doctor_id : INT <<FK>>
+    * clinic_id : INT <<FK>>
+    date : DATE
+    start_time : TIME
+    end_time : TIME
+    status : ENUM(pending, confirmed, checked_in,\ncompleted, cancelled, no_show)
+    cancellation_reason : TEXT
+    reserved_until : DATETIME
+    created_at : DATETIME
+    updated_at : DATETIME
+}
+
+entity "WAITING_LIST" as WaitingList {
+    * waitlist_id : INT <<PK>>
+    --
+    * patient_id : INT <<FK>>
+    * doctor_id : INT <<FK>>
+    * clinic_id : INT <<FK>>
+    requested_date : DATE
+    requested_time : TIME
+    status : ENUM(active, offered, claimed, expired)
+    offered_at : DATETIME
+    claim_deadline : DATETIME
+    queue_position : INT
+    created_at : DATETIME
+}
+
+entity "NOTIFICATION" as Notification {
+    * notification_id : INT <<PK>>
+    --
+    * patient_id : INT <<FK>>
+    * appointment_id : INT <<FK>>
+    type : ENUM(confirmation, reminder,\ncancellation, schedule_change, slot_offer)
+    channel : ENUM(sms, email)
+    status : ENUM(sent, failed)
+    sent_at : DATETIME
+    template_id : INT <<FK>>
+}
+
+entity "NOTIFICATION_TEMPLATE" as NotifTemplate {
+    * template_id : INT <<PK>>
+    --
+    type : ENUM(confirmation, reminder,\ncancellation, schedule_change, slot_offer)
+    channel : ENUM(sms, email)
+    subject : VARCHAR
+    body : TEXT
+    updated_by : INT <<FK>>
+    updated_at : DATETIME
+}
+
+entity "REFERRAL" as Referral {
+    * referral_id : INT <<PK>>
+    --
+    * patient_id : INT <<FK>>
+    * doctor_id : INT <<FK>>
+    referred_hospital : VARCHAR
+    reason : TEXT
+    status : ENUM(completed, archived)
+    version : INT
+    parent_referral_id : INT <<FK>>
+    authorized_by : INT <<FK>>
+    authorized_at : DATETIME
+    created_at : DATETIME
+}
+
+entity "AUDIT_LOG" as AuditLog {
+    * log_id : INT <<PK>>
+    --
+    * user_id : INT <<FK>>
+    action : VARCHAR
+    entity_type : VARCHAR
+    entity_id : INT
+    ip_address : VARCHAR
+    timestamp : DATETIME
+}
+
+entity "PAYMENT" as Payment {
+    * payment_id : INT <<PK>>
+    --
+    * appointment_id : INT <<FK>>
+    * processed_by : INT <<FK>>
+    amount : DECIMAL
+    method : ENUM(visa, mastercard,\ngoogle_pay, apple_pay, paynow)
+    status : ENUM(pending, completed, failed)
+    transaction_ref : VARCHAR
+    paid_at : DATETIME
+}
+
+' ===== RELATIONSHIPS =====
+
+' User to Patient / Staff
+User        ||--o| Patient       : "is a"
+User        ||--o| Staff         : "is a"
+
+' Role & Permissions
+User        }o--|| Role          : "assigned"
+Role        ||--o{ RolePermission : "has"
+Permission  ||--o{ RolePermission : "grants"
+
+' Clinic
+Staff       }o--|| Clinic        : "works at"
+
+' Doctor Availability
+Staff       ||--o{ DoctorAvailability : "blocks"
+Clinic      ||--o{ DoctorAvailability : "scoped to"
+
+' Appointment
+Patient     ||--o{ Appointment   : "books"
+Staff       ||--o{ Appointment   : "assigned to"
+Clinic      ||--o{ Appointment   : "held at"
+
+' Waiting List
+Patient     ||--o{ WaitingList   : "joins"
+Staff       ||--o{ WaitingList   : "queued for"
+Clinic      ||--o{ WaitingList   : "scoped to"
+
+' Notification
+Patient         ||--o{ Notification     : "receives"
+Appointment     ||--o{ Notification     : "triggers"
+NotifTemplate   ||--o{ Notification     : "uses"
+
+' Referral
+Patient     ||--o{ Referral      : "subject of"
+Staff       ||--o{ Referral      : "authored by"
+Referral    ||--o| Referral      : "versioned from"
+
+' Payment
+Appointment ||--o| Payment       : "paid via"
+Staff       ||--o{ Payment       : "processed by"
+
+' Audit
+User        ||--o{ AuditLog      : "logged by"
+
+@enduml
